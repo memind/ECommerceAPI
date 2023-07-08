@@ -14,8 +14,6 @@ namespace ECommerceAPI.Persistance.Context
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            //ChangeTracker: Entitylerde yapilan degisiklikleri ya da yeni eklenen degisiklikleri yakalayan DbContext'in propertysi. Update operasyonlarinda track edilen verileri yakalayip elde etmeyi saglar
-
             var datas = ChangeTracker.Entries<BaseEntity>();
 
             foreach (var data in datas)

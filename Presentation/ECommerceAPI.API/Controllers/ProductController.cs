@@ -27,9 +27,10 @@ namespace ECommerceAPI.API.Controllers
         }
 
         [HttpGet]
-        public async Task Get()
+        public async Task<IQueryable<Product>> Get()
         {
-
+            var list = _productReadRepository.GetAll();
+            return list;
         }
     }
 }
