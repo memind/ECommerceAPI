@@ -22,6 +22,7 @@ using ECommerceAPI.Persistance.Repositories.ProductRepositories;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using ECommerceAPI.Application.Repositories.ProductRepositories;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ECommerceAPI.API.Controllers
 {
@@ -29,6 +30,7 @@ namespace ECommerceAPI.API.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = "Admin")]
     public class ProductController : ControllerBase
     {
 
