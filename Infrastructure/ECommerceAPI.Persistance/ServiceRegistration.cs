@@ -16,6 +16,9 @@ using ECommerceAPI.Persistance.Repositories.FileRepositories;
 using ECommerceAPI.Persistance.Repositories.ProductImageFileRepositories;
 using ECommerceAPI.Persistance.Repositories.InvoiceFileRepositories;
 using ECommerceAPI.Domain.Entities.Identity;
+using ECommerceAPI.Application.Abstractions.Services.Authentication;
+using ECommerceAPI.Application.Abstractions.Services;
+using ECommerceAPI.Persistence.Services;
 
 namespace ECommerceAPI.Persistance
 {
@@ -46,6 +49,11 @@ namespace ECommerceAPI.Persistance
                 options.Password.RequireLowercase = false;
                 options.Password.RequireUppercase = false;
             }).AddEntityFrameworkStores<ECommerceAPIDbContext>();
+
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IExternalAuthentication, AuthService>();
+            services.AddScoped<IInternalAuthentication, AuthService>();
         }
     }
 }
