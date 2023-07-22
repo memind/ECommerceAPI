@@ -15,7 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddPersistanceServices();
 builder.Services.AddInfrastructureServices();
 builder.Services.AddApplicationServices();
-builder.Services.AddStorage<LocalStorage>(); // If you want to use any other storage, change the "LocalStorage" type to your storage type.
+builder.Services.AddStorage<LocalStorage>(); // If you want to use any other storage, change the type "LocalStorage" to your storage type.
 
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy
 .WithOrigins("http://localhost:4200", "https://localhost:4200")
@@ -40,7 +40,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
             ValidAudience = builder.Configuration["Token:Audience"],
             ValidIssuer = builder.Configuration["Token:Issuer"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Token:SecurityKey"]))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Token:SecurityKey"])),
+            LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => expires != null ? expires > DateTime.UtcNow : false
         };
     });
 
