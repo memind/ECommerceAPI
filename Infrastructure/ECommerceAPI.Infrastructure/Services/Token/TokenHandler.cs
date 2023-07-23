@@ -5,6 +5,8 @@ using d = ECommerceAPI.Application.DTOs;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography;
 using System.Text;
+using ECommerceAPI.Domain.Entities.Identity;
+using System.Security.Claims;
 
 namespace ECommerceAPI.Infrastructure.Services.Token
 {
@@ -15,7 +17,7 @@ namespace ECommerceAPI.Infrastructure.Services.Token
         {
             _configuration = configuration;
         }
-        public Application.DTOs.Token CreateAccessToken(int second)
+        public Application.DTOs.Token CreateAccessToken(int second, AppUser user)
         {
             Application.DTOs.Token token = new();
             //Security Key'in simetriğini alıyoruz.
@@ -30,7 +32,8 @@ namespace ECommerceAPI.Infrastructure.Services.Token
                 issuer: _configuration["Token:Issuer"],
                 expires: token.Expiration,
                 notBefore: DateTime.UtcNow,
-                signingCredentials: signingCredentials
+                signingCredentials: signingCredentials,
+                claims: new List<Claim> { new(ClaimTypes.Name, user.UserName) }
                 );
             //Token oluşturucu sınıfından bir örnek alalım.
             JwtSecurityTokenHandler tokenHandler = new();

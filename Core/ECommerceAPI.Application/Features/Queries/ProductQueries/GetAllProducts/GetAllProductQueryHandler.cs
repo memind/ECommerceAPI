@@ -1,17 +1,22 @@
 ﻿using ECommerceAPI.Application.Repositories.ProductRepositories;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace ECommerceAPI.Application.Features.Queries.ProductQueries.GetAllProducts
 {
     public class GetAllProductQueryHandler : IRequestHandler<GetAllProductQueryRequest, GetAllProductQueryResponse>
     {
-        readonly IProductReadRepository _productReadRepository;
-        public GetAllProductQueryHandler(IProductReadRepository productReadRepository)
+        readonly IProductReadRepository _productReadRepository; 
+        readonly ILogger<GetAllProductQueryHandler> _logger;
+        public GetAllProductQueryHandler(IProductReadRepository productReadRepository, ILogger<GetAllProductQueryHandler> logger)
         {
             _productReadRepository = productReadRepository;
+            _logger = logger;
         }
         public async Task<GetAllProductQueryResponse> Handle(GetAllProductQueryRequest request, CancellationToken cancellationToken)
         {
+            _logger.LogInformation("Get all products");
+
             var totalCount = _productReadRepository.GetAll(false).Count();
             var products = _productReadRepository.GetAll(false).Skip(request.Page * request.Size).Take(request.Size).Select(p => new
             {

@@ -33,22 +33,23 @@ namespace ECommerceAPI.API.Controllers
     [Authorize(AuthenticationSchemes = "Admin")]
     public class ProductController : ControllerBase
     {
-
         private readonly IWebHostEnvironment _webHostEnvironment;
-
+        readonly ILogger<ProductController> _logger;
 
         private readonly IStorageService _storageService;
         readonly IMediator _mediator;
 
-        public ProductController(IMediator mediator)
+        public ProductController(IMediator mediator, ILogger<ProductController> logger)
         {
             _mediator = mediator;
+            _logger = logger;
         }
 
 
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] GetAllProductQueryRequest getAllProductQueryRequest)
         {
+            _logger.LogInformation("asmdlasmdlamsd");
             GetAllProductQueryResponse response = await _mediator.Send(getAllProductQueryRequest);
             return Ok(response);
         }
