@@ -19,6 +19,11 @@ using ECommerceAPI.Domain.Entities.Identity;
 using ECommerceAPI.Application.Abstractions.Services.Authentication;
 using ECommerceAPI.Application.Abstractions.Services;
 using ECommerceAPI.Persistence.Services;
+using ECommerceAPI.Application.Repositories.BasketItemRepositories;
+using ECommerceAPI.Application.Repositories.BasketRepositories;
+using ECommerceAPI.Persistance.Repositories.BasketItemRepositories;
+using ECommerceAPI.Persistance.Repositories.BasketRepositories;
+using ECommerceAPI.Persistance.Services;
 
 namespace ECommerceAPI.Persistance
 {
@@ -40,6 +45,10 @@ namespace ECommerceAPI.Persistance
             services.AddScoped<IProductImageFileWriteRepository, ProductImageFileWriteRepository>();
             services.AddScoped<IInvoiceFileReadRepository, InvoiceFileReadRepository>();
             services.AddScoped<IInvoiceFileWriteRepository, InvoiceFileWriteRepository>();
+            services.AddScoped<IBasketItemReadRepository, BasketItemReadRepository>();
+            services.AddScoped<IBasketItemWriteRepository, BasketItemWriteRepository>();
+            services.AddScoped<IBasketReadRepository, BasketReadRepository>();
+            services.AddScoped<IBasketWriteRepository, BasketWriteRepository>();
 
             services.AddIdentity<AppUser, AppRole>(options =>
             {
@@ -54,6 +63,7 @@ namespace ECommerceAPI.Persistance
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IExternalAuthentication, AuthService>();
             services.AddScoped<IInternalAuthentication, AuthService>();
+            services.AddScoped<IBasketService, BasketService>();
         }
     }
 }

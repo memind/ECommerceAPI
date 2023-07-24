@@ -11,5 +11,6 @@ namespace ECommerceAPI.Domain.Entities
         // Nav Props
         public Customer Customer { get; set; }
         public ICollection<Product> Products { get; set; }
+        public Basket Basket { get; set; }
     }
 }
