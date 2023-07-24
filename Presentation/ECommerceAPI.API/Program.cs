@@ -1,4 +1,5 @@
 using ECommerceAPI.API.Configurations.ColumnWriters;
+using ECommerceAPI.API.Extensions;
 using ECommerceAPI.Application;
 using ECommerceAPI.Application.Validators.Products;
 using ECommerceAPI.Infrastructure;
@@ -6,6 +7,7 @@ using ECommerceAPI.Infrastructure.Filters;
 using ECommerceAPI.Infrastructure.Services.Storage.Azure;
 using ECommerceAPI.Infrastructure.Services.Storage.Local;
 using ECommerceAPI.Persistance;
+using ECommerceAPI.SignalR;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpLogging;
@@ -24,12 +26,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddPersistanceServices();
 builder.Services.AddInfrastructureServices();
 builder.Services.AddApplicationServices();
+builder.Services.AddSignalRServices();
 builder.Services.AddStorage<LocalStorage>(); // If you want to use any other storage, change the type "LocalStorage" to your storage type.
 
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy
 .WithOrigins("http://localhost:4200", "https://localhost:4200")
 .AllowAnyHeader()
 .AllowAnyMethod()
+.AllowCredentials()
 ));
 
 Logger log = new LoggerConfiguration()
@@ -95,6 +99,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.ConfigureExceptionHandler<Program>(app.Services.GetRequiredService<ILogger<Program>>());
 app.UseStaticFiles();
 app.UseSerilogRequestLogging();
 
@@ -112,5 +117,6 @@ app.Use(async (context, next) =>
 });
 
 app.MapControllers();
+app.MapHubs();
 
 app.Run();
