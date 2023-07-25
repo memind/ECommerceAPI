@@ -34,16 +34,12 @@ namespace ECommerceAPI.Persistance.Migrations
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("UserId1")
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Baskets");
                 });
@@ -247,9 +243,6 @@ namespace ECommerceAPI.Persistance.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
@@ -258,8 +251,6 @@ namespace ECommerceAPI.Persistance.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CustomerId");
 
                     b.ToTable("Orders");
                 });
@@ -394,21 +385,6 @@ namespace ECommerceAPI.Persistance.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("OrderProduct", b =>
-                {
-                    b.Property<Guid>("OrdersId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ProductsId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("OrdersId", "ProductsId");
-
-                    b.HasIndex("ProductsId");
-
-                    b.ToTable("OrderProduct");
-                });
-
             modelBuilder.Entity("ProductProductImageFile", b =>
                 {
                     b.Property<Guid>("ProductImageFilesId")
@@ -448,7 +424,7 @@ namespace ECommerceAPI.Persistance.Migrations
                 {
                     b.HasOne("ECommerceAPI.Domain.Entities.Identity.AppUser", "User")
                         .WithMany("Baskets")
-                        .HasForeignKey("UserId1")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -476,12 +452,6 @@ namespace ECommerceAPI.Persistance.Migrations
 
             modelBuilder.Entity("ECommerceAPI.Domain.Entities.Order", b =>
                 {
-                    b.HasOne("ECommerceAPI.Domain.Entities.Customer", "Customer")
-                        .WithMany("Orders")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("ECommerceAPI.Domain.Entities.Basket", "Basket")
                         .WithOne("Order")
                         .HasForeignKey("ECommerceAPI.Domain.Entities.Order", "Id")
@@ -489,8 +459,6 @@ namespace ECommerceAPI.Persistance.Migrations
                         .IsRequired();
 
                     b.Navigation("Basket");
-
-                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -544,21 +512,6 @@ namespace ECommerceAPI.Persistance.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("OrderProduct", b =>
-                {
-                    b.HasOne("ECommerceAPI.Domain.Entities.Order", null)
-                        .WithMany()
-                        .HasForeignKey("OrdersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ECommerceAPI.Domain.Entities.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("ProductProductImageFile", b =>
                 {
                     b.HasOne("ECommerceAPI.Domain.Entities.ProductImageFile", null)
@@ -580,11 +533,6 @@ namespace ECommerceAPI.Persistance.Migrations
 
                     b.Navigation("Order")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("ECommerceAPI.Domain.Entities.Customer", b =>
-                {
-                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("ECommerceAPI.Domain.Entities.Identity.AppUser", b =>
