@@ -24,12 +24,15 @@ using ECommerceAPI.Application.Repositories.BasketRepositories;
 using ECommerceAPI.Persistance.Repositories.BasketItemRepositories;
 using ECommerceAPI.Persistance.Repositories.BasketRepositories;
 using ECommerceAPI.Persistance.Services;
+using Microsoft.AspNetCore.Identity;
+using ECommerceAPI.Persistance.Repositories.CompletedOrderRepositories;
+using ECommerceAPI.Application.Repositories.CompletedOrderRepositories;
 
 namespace ECommerceAPI.Persistance
 {
     public static class ServiceRegistration
     {
-        public static void AddPersistanceServices(this IServiceCollection services) 
+        public static void AddPersistanceServices(this IServiceCollection services)
         {
             services.AddDbContext<ECommerceAPIDbContext>(options => options.UseNpgsql(Configurations.ConnectionString));
 
@@ -49,15 +52,21 @@ namespace ECommerceAPI.Persistance
             services.AddScoped<IBasketItemWriteRepository, BasketItemWriteRepository>();
             services.AddScoped<IBasketReadRepository, BasketReadRepository>();
             services.AddScoped<IBasketWriteRepository, BasketWriteRepository>();
+            services.AddScoped<ICompletedOrderReadRepository, CompletedOrderReadRepository>();
+            services.AddScoped<ICompletedOrderWriteRepository, CompletedOrderWriteRepository>();
 
-            services.AddIdentity<AppUser, AppRole>(options =>
-            {
-                options.Password.RequiredLength = 3;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireDigit = false;
-                options.Password.RequireLowercase = false;
-                options.Password.RequireUppercase = false;
-            }).AddEntityFrameworkStores<ECommerceAPIDbContext>();
+            services.AddIdentity<AppUser, AppRole>
+                (options =>
+                    {
+                        options.Password.RequiredLength = 3;
+                        options.Password.RequireNonAlphanumeric = false;
+                        options.Password.RequireDigit = false;
+                        options.Password.RequireLowercase = false;
+                        options.Password.RequireUppercase = false;
+                    }
+                )
+                .AddEntityFrameworkStores<ECommerceAPIDbContext>()
+                .AddDefaultTokenProviders();
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthService, AuthService>();
@@ -65,6 +74,8 @@ namespace ECommerceAPI.Persistance
             services.AddScoped<IInternalAuthentication, AuthService>();
             services.AddScoped<IBasketService, BasketService>();
             services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IRoleService, RoleService>();
+
         }
     }
 }

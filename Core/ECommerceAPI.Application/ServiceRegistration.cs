@@ -1,5 +1,8 @@
-﻿using MediatR;
+﻿using ECommerceAPI.Application.Features.Commands.OrderCommands.CompleteOrder;
+using ECommerceAPI.Application.Features.Commands.ProductCommands.CreateProduct;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 namespace ECommerceAPI.Application
 {
