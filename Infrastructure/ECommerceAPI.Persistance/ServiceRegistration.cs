@@ -27,6 +27,10 @@ using ECommerceAPI.Persistance.Services;
 using Microsoft.AspNetCore.Identity;
 using ECommerceAPI.Persistance.Repositories.CompletedOrderRepositories;
 using ECommerceAPI.Application.Repositories.CompletedOrderRepositories;
+using ECommerceAPI.Application.Repositories.EndpointRepositories;
+using ECommerceAPI.Application.Repositories.MenuRepositories;
+using ECommerceAPI.Persistance.Repositories.EndpointRepositories;
+using ECommerceAPI.Persistance.Repositories.MenuRepositories;
 
 namespace ECommerceAPI.Persistance
 {
@@ -54,6 +58,10 @@ namespace ECommerceAPI.Persistance
             services.AddScoped<IBasketWriteRepository, BasketWriteRepository>();
             services.AddScoped<ICompletedOrderReadRepository, CompletedOrderReadRepository>();
             services.AddScoped<ICompletedOrderWriteRepository, CompletedOrderWriteRepository>();
+            services.AddScoped<IEndpointReadRepository, EndpointReadRepository>();
+            services.AddScoped<IEndpointWriteRepository, EndpointWriteRepository>();
+            services.AddScoped<IMenuReadRepository, MenuReadRepository>();
+            services.AddScoped<IMenuWriteRepository, MenuWriteRepository>();
 
             services.AddIdentity<AppUser, AppRole>
                 (options =>
@@ -75,7 +83,8 @@ namespace ECommerceAPI.Persistance
             services.AddScoped<IBasketService, BasketService>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IRoleService, RoleService>();
-
+            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IAuthorizationEndpointService, AuthorizationEndpointService>();
         }
     }
 }

@@ -27,6 +27,8 @@ using ECommerceAPI.Application.Features.Commands.ProductImageFileCommands.Change
 using ECommerceAPI.Application.Consts;
 using ECommerceAPI.Application.CustomAttributes;
 using ECommerceAPI.Application.Enums;
+using ECommerceAPI.Application.Abstractions.Services;
+using ECommerceAPI.Application.Features.Commands.ProductCommands.UpdateStockQrCodeToProduct;
 
 namespace ECommerceAPI.API.Controllers
 {
@@ -38,16 +40,24 @@ namespace ECommerceAPI.API.Controllers
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
         readonly ILogger<ProductController> _logger;
+        readonly IProductService _productService;
 
         private readonly IStorageService _storageService;
         readonly IMediator _mediator;
 
-        public ProductController(IMediator mediator, ILogger<ProductController> logger)
+        public ProductController(IMediator mediator, ILogger<ProductController> logger, IProductService productService)
         {
             _mediator = mediator;
             _logger = logger;
+            _productService = productService;
         }
 
+        [HttpGet("qrcode/{productId}")]
+        public async Task<IActionResult> GetQrCodeToProduct([FromRoute] string productId)
+        {
+            var data = await _productService.QrCodeToProductAsync(productId);
+            return File(data, "image/png");
+        }
 
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] GetAllProductQueryRequest getAllProductQueryRequest)
@@ -125,6 +135,13 @@ namespace ECommerceAPI.API.Controllers
         public async Task<IActionResult> ChangeShowcaseImage([FromQuery] ChangeShowcaseImageCommandRequest changeShowcaseImageCommandRequest)
         {
             ChangeShowcaseImageCommandResponse response = await _mediator.Send(changeShowcaseImageCommandRequest);
+            return Ok(response);
+        }
+
+        [HttpPut("qrcode")]
+        public async Task<IActionResult> UpdateStockQrCodeToProduct(UpdateStockQrCodeToProductCommandRequest updateStockQrCodeToProductCommandRequest)
+        {
+            UpdateStockQrCodeToProductCommandResponse response = await _mediator.Send(updateStockQrCodeToProductCommandRequest);
             return Ok(response);
         }
     }

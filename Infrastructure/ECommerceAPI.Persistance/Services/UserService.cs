@@ -2,15 +2,21 @@
 using ECommerceAPI.Application.DTOs.User;
 using ECommerceAPI.Application.Exceptions;
 using ECommerceAPI.Application.Helpers;
+using ECommerceAPI.Application.Repositories.EndpointRepositories;
+using ECommerceAPI.Domain.Entities;
 using ECommerceAPI.Domain.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace ECommerceAPI.Persistence.Services
 {
     public class UserService : IUserService
     {
         readonly UserManager<AppUser> _userManager;
-        public UserService(UserManager<AppUser> userManager)
+        readonly IEndpointReadRepository _endpointReadRepository;
+
+        public UserService(UserManager<AppUser> userManager,
+            IEndpointReadRepository endpointReadRepository)
         {
             _userManager = userManager;
         }
@@ -60,6 +66,77 @@ namespace ECommerceAPI.Persistence.Services
                 else
                     throw new PasswordChangeFailedException();
             }
+        }
+
+        public async Task<List<ListUserDto>> GetAllUsersAsync(int page, int size)
+        {
+            var users = await _userManager.Users
+                  .Skip(page * size)
+                  .Take(size)
+                  .ToListAsync();
+
+            return users.Select(user => new ListUserDto
+            {
+                Id = user.Id.ToString(),
+                Email = user.Email,
+                NameSurname = user.NameSurname,
+                TwoFactorEnabled = user.TwoFactorEnabled,
+                UserName = user.UserName
+            }).ToList();
+        }
+
+        public int TotalUsersCount => _userManager.Users.Count();
+
+        public async Task AssignRoleToUserAsnyc(string userId, string[] roles)
+        {
+            AppUser user = await _userManager.FindByIdAsync(userId);
+            if (user != null)
+            {
+                var userRoles = await _userManager.GetRolesAsync(user);
+                await _userManager.RemoveFromRolesAsync(user, userRoles);
+
+                await _userManager.AddToRolesAsync(user, roles);
+            }
+        }
+        public async Task<string[]> GetRolesToUserAsync(string userIdOrName)
+        {
+            AppUser user = await _userManager.FindByIdAsync(userIdOrName);
+            if (user == null)
+                user = await _userManager.FindByNameAsync(userIdOrName);
+
+            if (user != null)
+            {
+                var userRoles = await _userManager.GetRolesAsync(user);
+                return userRoles.ToArray();
+            }
+            return new string[] { };
+        }
+
+        public async Task<bool> HasRolePermissionToEndpointAsync(string name, string code)
+        {
+            var userRoles = await GetRolesToUserAsync(name);
+
+            if (!userRoles.Any())
+                return false;
+
+            Endpoint? endpoint = await _endpointReadRepository.Table
+                     .Include(e => e.Roles)
+                     .FirstOrDefaultAsync(e => e.Code == code);
+
+            if (endpoint == null)
+                return false;
+
+            var hasRole = false;
+            var endpointRoles = endpoint.Roles.Select(r => r.Name);
+
+            foreach (var userRole in userRoles)
+            {
+                foreach (var endpointRole in endpointRoles)
+                    if (userRole == endpointRole)
+                        return true;
+            }
+
+            return false;
         }
     }
 }

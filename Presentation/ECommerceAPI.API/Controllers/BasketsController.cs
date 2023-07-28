@@ -33,7 +33,7 @@ namespace ETicaretAPI.API.Controllers
         }
 
         [HttpPost]
-        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Baskets, ActionType = ActionType.Reading, Definition = "Add Item To Basket")]
+        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Baskets, ActionType = ActionType.Writing, Definition = "Add Item To Basket")]
         public async Task<IActionResult> AddItemToBasket(AddItemToBasketCommandRequest addItemToBasketCommandRequest)
         {
             AddItemToBasketCommandResponse response = await _mediator.Send(addItemToBasketCommandRequest);

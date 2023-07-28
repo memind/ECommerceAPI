@@ -22,11 +22,11 @@ namespace ECommerceAPI.Infrastructure
             serviceCollection.AddScoped<IStorageService, StorageService>();
             serviceCollection.AddScoped<IMailService, MailService>();
             serviceCollection.AddScoped<IApplicationService, ApplicationService>();
+            serviceCollection.AddScoped<IQRCodeService, QRCodeService>();
         }
         public static void AddStorage<T>(this IServiceCollection serviceCollection) where T : Storage, IStorage
         {
             serviceCollection.AddScoped<IStorage, T>();
-
             serviceCollection.AddScoped<ITokenHandler, t.TokenHandler>();
         }
         public static void AddStorage(this IServiceCollection serviceCollection, StorageType storageType)
