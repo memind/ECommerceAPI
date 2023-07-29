@@ -32,7 +32,7 @@ builder.Services.AddSignalRServices();
 builder.Services.AddStorage<LocalStorage>(); // If you want to use any other storage, change the type "LocalStorage" to your storage type.
 
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy
-.WithOrigins("http://localhost:4200", "https://localhost:4200")
+.WithOrigins("", "") // CORS settings
 .AllowAnyHeader()
 .AllowAnyMethod()
 .AllowCredentials()

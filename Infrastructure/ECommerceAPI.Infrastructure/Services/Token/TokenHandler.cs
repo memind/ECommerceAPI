@@ -20,12 +20,9 @@ namespace ECommerceAPI.Infrastructure.Services.Token
         public Application.DTOs.Token CreateAccessToken(int second, AppUser user)
         {
             Application.DTOs.Token token = new();
-            //Security Key'in simetriğini alıyoruz.
             SymmetricSecurityKey securityKey = new(Encoding.UTF8.GetBytes(_configuration["Token:SecurityKey"]));
-            //Şifrelenmiş kimliği oluşturuyoruz.
             SigningCredentials signingCredentials = new(securityKey, SecurityAlgorithms.HmacSha256);
 
-            //Oluşturulacak token ayarlarını veriyoruz.
             token.Expiration = DateTime.UtcNow.AddSeconds(second);
             JwtSecurityToken securityToken = new(
                 audience: _configuration["Token:Audience"],
@@ -35,13 +32,12 @@ namespace ECommerceAPI.Infrastructure.Services.Token
                 signingCredentials: signingCredentials,
                 claims: new List<Claim> { new(ClaimTypes.Name, user.UserName) }
                 );
-            //Token oluşturucu sınıfından bir örnek alalım.
+
             JwtSecurityTokenHandler tokenHandler = new();
+
             token.AccessToken = tokenHandler.WriteToken(securityToken);
-
-            //string refreshToken = CreateRefreshToken();
-
             token.RefreshToken = CreateRefreshToken();
+
             return token;
         }
 
@@ -49,7 +45,9 @@ namespace ECommerceAPI.Infrastructure.Services.Token
         {
             byte[] number = new byte[32];
             using RandomNumberGenerator random = RandomNumberGenerator.Create();
+
             random.GetBytes(number);
+
             return Convert.ToBase64String(number);
         }
     }

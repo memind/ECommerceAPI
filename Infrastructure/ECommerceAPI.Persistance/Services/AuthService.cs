@@ -62,7 +62,7 @@ namespace ECommerceAPI.Persistence.Services
 
             if (result)
             {
-                await _userManager.AddLoginAsync(user, info); //AspNetUserLogins
+                await _userManager.AddLoginAsync(user, info);
 
                 Token token = _tokenHandler.CreateAccessToken(accessTokenLifeTime, user);
                 await _userService.UpdateRefreshTokenAsync(token.RefreshToken, user, token.Expiration, 15);
@@ -146,9 +146,6 @@ namespace ECommerceAPI.Persistence.Services
             if (user != null)
             {
                 string resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
-
-                //byte[] tokenBytes = Encoding.UTF8.GetBytes(resetToken);
-                //resetToken = WebEncoders.Base64UrlEncode(tokenBytes);
                 resetToken = resetToken.UrlEncode();
 
                 await _mailService.SendPasswordResetMailAsync(email, user.Id.ToString(), resetToken);
@@ -160,8 +157,6 @@ namespace ECommerceAPI.Persistence.Services
             AppUser user = await _userManager.FindByIdAsync(userId);
             if (user != null)
             {
-                //byte[] tokenBytes = WebEncoders.Base64UrlDecode(resetToken);
-                //resetToken = Encoding.UTF8.GetString(tokenBytes);
                 resetToken = resetToken.UrlDecode();
 
                 return await _userManager.VerifyUserTokenAsync(user, _userManager.Options.Tokens.PasswordResetTokenProvider, "ResetPassword", resetToken);

@@ -66,7 +66,7 @@ namespace ECommerceAPI.Persistance.Services
                 await _basketWriteRepository.SaveAsync();
                 return targetBasket;
             }
-            throw new Exception("Beklenmeyen bir hatayla karşılaşıldı...");
+            throw new Exception("An unexpected error occured!");
         }
 
         public async Task AddItemToBasketAsync(VM_Create_BasketItem basketItem)
